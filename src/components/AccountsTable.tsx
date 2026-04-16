@@ -44,6 +44,7 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
             <TableHead className="w-[320px] text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Account</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Status</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Auth Details</TableHead>
+            <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Admin Notes</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground text-right h-12">Followers</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12 text-center">Actions</TableHead>
           </TableRow>
@@ -149,6 +150,13 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
                         {profile.recoveryEmail || '—'}
                       </span>
                     </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-[200px]">
+                    <p className="text-[11px] leading-relaxed text-muted-foreground line-clamp-3 italic">
+                      {profile.notes || 'No notes available'}
+                    </p>
                   </div>
                 </TableCell>
                 <TableCell className="text-right font-sans text-sm text-foreground">
