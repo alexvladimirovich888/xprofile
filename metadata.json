@@ -1,0 +1,6 @@
+{
+  "name": "X Manager Dashboard",
+  "description": "A technical dashboard for managing X (formerly Twitter) accounts and projects with a strict dark mode aesthetic.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
