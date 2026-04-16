@@ -9,7 +9,12 @@ export const mockProfiles: XProfile[] = [
     category: 'TECH',
     addedDate: '2026-04-01',
     avatarUrl: 'https://picsum.photos/seed/filmfare/100/100',
-    badge: 'GOLD'
+    badge: 'GOLD',
+    status: 'ACTIVE',
+    email: 'admin@filmfare.com',
+    password: 'secret_password_123',
+    twoFactorSeed: 'JBSWY3DPEHPK3PXP',
+    notes: 'Premium account'
   },
   {
     id: '2',
@@ -19,7 +24,11 @@ export const mockProfiles: XProfile[] = [
     category: 'NEWS',
     addedDate: '2026-04-10',
     avatarUrl: 'https://picsum.photos/seed/cnn/100/100',
-    badge: 'BLUE'
+    badge: 'BLUE',
+    status: 'ACTIVE',
+    email: 'contact@cnnchile.cl',
+    password: 'chile_news_2026',
+    notes: 'Official channel'
   },
   {
     id: '3',
@@ -28,7 +37,11 @@ export const mockProfiles: XProfile[] = [
     followers: 2618347,
     category: 'TECH',
     addedDate: '2026-04-01',
-    avatarUrl: 'https://picsum.photos/seed/nasa/100/100'
+    avatarUrl: 'https://picsum.photos/seed/nasa/100/100',
+    status: 'BANNED',
+    email: 'community@nasa.gov',
+    password: 'mars_landing_99',
+    notes: 'Violation of policy'
   },
   {
     id: '4',
@@ -37,7 +50,10 @@ export const mockProfiles: XProfile[] = [
     followers: 2617605,
     category: 'POLITICS',
     addedDate: '2026-03-12',
-    avatarUrl: 'https://picsum.photos/seed/rita/100/100'
+    avatarUrl: 'https://picsum.photos/seed/rita/100/100',
+    status: 'ACTIVE',
+    email: 'carla@zambelli.br',
+    password: 'brasil_politics_01'
   },
   {
     id: '5',
@@ -47,7 +63,11 @@ export const mockProfiles: XProfile[] = [
     category: 'INFLUENCER',
     addedDate: '2026-03-17',
     avatarUrl: 'https://picsum.photos/seed/yogi/100/100',
-    badge: 'BLUE'
+    badge: 'BLUE',
+    status: 'ACTIVE',
+    email: 'ramdev@yoga.in',
+    password: 'yoga_life_108',
+    twoFactorSeed: 'KRSXG5CTKPSXG5CT'
   },
   {
     id: '6',
@@ -57,7 +77,10 @@ export const mockProfiles: XProfile[] = [
     category: 'NEWS',
     addedDate: '2026-03-12',
     avatarUrl: 'https://picsum.photos/seed/fortune/100/100',
-    badge: 'GOLD'
+    badge: 'GOLD',
+    status: 'ACTIVE',
+    email: 'editorial@fortune.com',
+    password: 'wealth_mag_xyz'
   },
   {
     id: '7',
@@ -67,7 +90,10 @@ export const mockProfiles: XProfile[] = [
     category: 'GOV',
     addedDate: '2026-03-12',
     avatarUrl: 'https://picsum.photos/seed/kenya/100/100',
-    badge: 'BLUE'
+    badge: 'BLUE',
+    status: 'ACTIVE',
+    email: 'info@dci.go.ke',
+    password: 'safiri_kenya_55'
   },
   {
     id: '8',
@@ -77,7 +103,10 @@ export const mockProfiles: XProfile[] = [
     category: 'INFLUENCER',
     addedDate: '2026-03-17',
     avatarUrl: 'https://picsum.photos/seed/marcela/100/100',
-    badge: 'BLUE'
+    badge: 'BLUE',
+    status: 'ACTIVE',
+    email: 'marcela@mcgowan.id',
+    password: 'influencer_joy_77'
   }
 ];
 

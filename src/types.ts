@@ -9,6 +9,11 @@ export interface XProfile {
   addedDate: string;
   avatarUrl: string;
   badge?: 'GOLD' | 'BLUE' | 'NONE';
+  status: 'ACTIVE' | 'BANNED';
+  email?: string;
+  password?: string;
+  twoFactorSeed?: string;
+  notes?: string;
 }
 
 export interface Project {

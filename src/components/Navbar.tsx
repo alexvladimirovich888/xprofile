@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Users, LayoutGrid, Plus } from 'lucide-react';
+import { Users, LayoutGrid, Plus, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from './AuthContext';
 
 interface NavbarProps {
   activeTab: 'accounts' | 'projects';
@@ -9,6 +10,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ activeTab, onTabChange }: NavbarProps) {
+  const { logout } = useAuth();
+
   return (
     <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto flex h-16 items-center px-4">
@@ -47,6 +50,16 @@ export function Navbar({ activeTab, onTabChange }: NavbarProps) {
             <Plus className="mr-2 h-4 w-4" />
             Add Profile
           </Button>
+          
+          <div className="h-4 w-px bg-border mx-2" />
+          
+          <button 
+            onClick={logout}
+            className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+            title="Logout"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </nav>

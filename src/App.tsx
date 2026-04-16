@@ -5,9 +5,16 @@ import { ProjectsGrid } from './components/ProjectsGrid';
 import { FilterBar } from './components/FilterBar';
 import { mockProfiles, mockProjects } from './mockData';
 import { motion, AnimatePresence } from 'motion/react';
+import { AuthProvider, useAuth } from './components/AuthContext';
+import { LoginPage } from './components/LoginPage';
 
-export default function App() {
+function Dashboard() {
   const [activeTab, setActiveTab] = useState<'accounts' | 'projects'>('accounts');
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent-blue selection:text-white flex flex-col">
@@ -61,5 +68,13 @@ export default function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Dashboard />
+    </AuthProvider>
   );
 }
