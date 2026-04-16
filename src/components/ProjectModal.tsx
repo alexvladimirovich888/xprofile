@@ -1,0 +1,209 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Project, ProjectType } from '@/src/types';
+import { ImagePlus, Loader2 } from 'lucide-react';
+
+interface ProjectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (project: Partial<Project>) => Promise<void>;
+  initialData?: Project | null;
+}
+
+const PROJECT_TYPES: { value: ProjectType; label: string }[] = [
+  { value: 'COMMUNITY', label: 'Community' },
+  { value: 'PERSONAL_PAGE', label: 'Personal Page' },
+  { value: 'PROJECT_WITH_WEBSITE', label: 'Project with Website' },
+];
+
+export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectModalProps) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState<Partial<Project>>({
+    name: '',
+    ticker: '',
+    description: '',
+    type: 'COMMUNITY',
+    pnl: '',
+    avatarUrl: '',
+    bannerUrl: '',
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    } else {
+      setFormData({
+        name: '',
+        ticker: '',
+        description: '',
+        type: 'COMMUNITY',
+        pnl: '',
+        avatarUrl: '',
+        bannerUrl: '',
+      });
+    }
+  }, [initialData, isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      await onSave(formData);
+      onClose();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFileUpload = (field: 'avatarUrl' | 'bannerUrl') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, [field]: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px] bg-card border-border overflow-y-auto max-h-[90vh]">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold tracking-tight">
+            {initialData ? 'Edit Project' : 'Add New Project'}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Project Name</Label>
+              <Input
+                id="name"
+                className="bg-background"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="X Manager"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ticker" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Ticker</Label>
+              <Input
+                id="ticker"
+                className="bg-background"
+                value={formData.ticker}
+                onChange={(e) => setFormData({ ...formData, ticker: e.target.value })}
+                placeholder="$XMAN"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Project View (Type)</Label>
+              <Select 
+                value={formData.type} 
+                onValueChange={(value: ProjectType) => setFormData({ ...formData, type: value })}
+              >
+                <SelectTrigger className="bg-background">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  {PROJECT_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="pnl" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">PNL</Label>
+              <Input
+                id="pnl"
+                className="bg-background"
+                value={formData.pnl}
+                onChange={(e) => setFormData({ ...formData, pnl: e.target.value })}
+                placeholder="+150%"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Avatar Image</Label>
+              <div className="relative group border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:border-accent-blue/50 transition-colors">
+                {formData.avatarUrl ? (
+                  <img src={formData.avatarUrl} alt="Avatar" className="h-20 w-20 rounded-full object-cover mb-4" />
+                ) : (
+                  <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
+                )}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={handleFileUpload('avatarUrl')}
+                />
+                <span className="text-[10px] text-muted-foreground">Click to upload avatar</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Banner Image</Label>
+              <div className="relative group border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:border-accent-blue/50 transition-colors">
+                {formData.bannerUrl ? (
+                  <img src={formData.bannerUrl} alt="Banner" className="h-20 w-40 rounded object-cover mb-4" />
+                ) : (
+                  <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
+                )}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  onChange={handleFileUpload('bannerUrl')}
+                />
+                <span className="text-[10px] text-muted-foreground">Click to upload banner</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="desc" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Description</Label>
+            <Textarea
+              id="desc"
+              className="bg-background min-h-[100px]"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Tell us about this project..."
+            />
+          </div>
+
+          <DialogFooter className="pt-2">
+            <Button type="button" variant="outline" onClick={onClose} className="border-border">
+              Cancel
+            </Button>
+            <Button disabled={isSaving} type="submit" className="bg-accent-blue text-white hover:bg-accent-blue/90 font-bold px-8">
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {initialData ? 'Update Project' : 'Add Project'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

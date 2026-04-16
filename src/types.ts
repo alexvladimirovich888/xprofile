@@ -13,14 +13,20 @@ export interface XProfile {
   email?: string;
   password?: string;
   recoveryEmail?: string;
+  profileUrl?: string;
   notes?: string;
 }
 
+export type ProjectType = 'COMMUNITY' | 'PERSONAL_PAGE' | 'PROJECT_WITH_WEBSITE';
+
 export interface Project {
   id: string;
-  title: string;
+  name: string;
+  ticker: string;
   description: string;
-  profileCount: number;
-  updatedAt: string;
-  thumbnailUrl: string;
+  type: ProjectType;
+  pnl: string;
+  avatarUrl: string;
+  bannerUrl: string;
+  createdAt: string;
 }

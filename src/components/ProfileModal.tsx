@@ -37,6 +37,7 @@ export function ProfileModal({ isOpen, onClose, onSave, initialData }: ProfileMo
     email: '',
     password: '',
     recoveryEmail: '',
+    profileUrl: '',
     notes: '',
     status: 'ACTIVE',
     badge: 'NONE',
@@ -55,6 +56,7 @@ export function ProfileModal({ isOpen, onClose, onSave, initialData }: ProfileMo
         email: '',
         password: '',
         recoveryEmail: '',
+        profileUrl: '',
         notes: '',
         status: 'ACTIVE',
         badge: 'NONE',
@@ -168,6 +170,18 @@ export function ProfileModal({ isOpen, onClose, onSave, initialData }: ProfileMo
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="profileUrl" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">X Profile URL</Label>
+            <Input
+              id="profileUrl"
+              type="url"
+              className="bg-background"
+              value={formData.profileUrl}
+              onChange={(e) => setFormData({ ...formData, profileUrl: e.target.value })}
+              placeholder="https://x.com/elonmusk"
+            />
           </div>
 
           <div className="p-4 border border-accent-blue/20 rounded-lg bg-accent-blue/5 space-y-4">

@@ -16,6 +16,7 @@ CREATE TABLE accounts (
   email TEXT,
   password TEXT,
   recovery_email TEXT,
+  profile_url TEXT,
   notes TEXT,
   badge TEXT CHECK (badge IN ('GOLD', 'BLUE', 'NONE')) DEFAULT 'NONE',
   avatar_url TEXT,
@@ -25,11 +26,13 @@ CREATE TABLE accounts (
 -- Projects Table
 CREATE TABLE projects (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  title TEXT NOT NULL,
+  name TEXT NOT NULL,
+  ticker TEXT,
   description TEXT,
-  profile_count INTEGER DEFAULT 0,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  thumbnail_url TEXT,
+  type TEXT CHECK (type IN ('COMMUNITY', 'PERSONAL_PAGE', 'PROJECT_WITH_WEBSITE')),
+  pnl TEXT,
+  avatar_url TEXT,
+  banner_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

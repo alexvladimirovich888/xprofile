@@ -8,15 +8,16 @@ interface NavbarProps {
   activeTab: 'accounts' | 'projects';
   onTabChange: (tab: 'accounts' | 'projects') => void;
   onAddProfile: () => void;
+  onAddProject: () => void;
 }
 
-export function Navbar({ activeTab, onTabChange, onAddProfile }: NavbarProps) {
+export function Navbar({ activeTab, onTabChange, onAddProfile, onAddProject }: NavbarProps) {
   const { logout } = useAuth();
 
   return (
     <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container mx-auto flex h-16 items-center px-4">
-        <div className="mr-8 flex items-center space-x-2">
+        <div className="mr-8 flex items-center space-x-2 cursor-pointer" onClick={() => onTabChange('accounts')}>
           <div className="h-8 w-8 rounded bg-accent-green flex items-center justify-center">
             <span className="font-bold text-black text-lg leading-none">X</span>
           </div>
@@ -47,14 +48,25 @@ export function Navbar({ activeTab, onTabChange, onAddProfile }: NavbarProps) {
         </div>
 
         <div className="ml-auto flex items-center space-x-4">
-          <Button 
-            variant="default" 
-            onClick={onAddProfile}
-            className="bg-accent-green text-black hover:bg-accent-green/90 font-semibold px-4 py-2 h-9 rounded-md border-none"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add Profile
-          </Button>
+          {activeTab === 'accounts' ? (
+            <Button 
+              variant="default" 
+              onClick={onAddProfile}
+              className="bg-accent-green text-black hover:bg-accent-green/90 font-semibold px-4 py-2 h-9 rounded-md border-none"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Profile
+            </Button>
+          ) : (
+            <Button 
+              variant="default" 
+              onClick={onAddProject}
+              className="bg-accent-blue text-white hover:bg-accent-blue/90 font-semibold px-4 py-2 h-9 rounded-md border-none"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Project
+            </Button>
+          )}
           
           <div className="h-4 w-px bg-border mx-2" />
           

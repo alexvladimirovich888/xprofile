@@ -41,7 +41,7 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
       <Table>
         <TableHeader className="bg-card">
           <TableRow className="hover:bg-transparent border-border">
-            <TableHead className="w-[240px] text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Account</TableHead>
+            <TableHead className="w-[320px] text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Account</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Status</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Auth Details</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground text-right h-12">Followers</TableHead>
@@ -64,19 +64,30 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
                 <TableCell className="py-3.5">
                   <div className="flex items-center space-x-3">
                     <div className="relative">
-                      <Avatar className={`h-7 w-7 border ${profile.status === 'BANNED' ? 'border-destructive/50' : 'border-border'}`}>
-                        <AvatarImage src={profile.avatarUrl} />
-                        <AvatarFallback className="text-[10px] bg-card">{profile.handle.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <Avatar className={`h-20 w-20 border-2 ${profile.status === 'BANNED' ? 'border-destructive/50' : 'border-border'}`}>
+                        <AvatarImage src={profile.avatarUrl} className="object-cover" />
+                        <AvatarFallback className="text-xl font-bold bg-card">{profile.handle.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       {profile.status === 'BANNED' && (
-                        <div className="absolute -top-1 -right-1 bg-destructive text-white rounded-full p-0.5 z-10">
-                          <AlertTriangle className="h-2 w-2" />
+                        <div className="absolute top-0 right-0 bg-destructive text-white rounded-full p-1.5 z-10 shadow-lg border-2 border-background">
+                          <AlertTriangle className="h-4 w-4" />
                         </div>
                       )}
                     </div>
                     <div className="flex flex-col">
                       <div className="flex items-center space-x-2">
-                        <span className="text-accent-blue font-medium text-sm hover:underline cursor-pointer">@{profile.handle}</span>
+                        {profile.profileUrl ? (
+                          <a 
+                            href={profile.profileUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-accent-blue font-medium text-sm hover:underline cursor-pointer"
+                          >
+                            @{profile.handle}
+                          </a>
+                        ) : (
+                          <span className="text-accent-blue font-medium text-sm hover:underline cursor-pointer">@{profile.handle}</span>
+                        )}
                         {profile.badge === 'GOLD' && (
                           <Badge variant="outline" className="h-3 px-1 text-[7px] bg-yellow-500/5 text-yellow-500/80 border-yellow-500/20 font-bold tracking-tighter">GOLD</Badge>
                         )}
@@ -85,7 +96,18 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
                         )}
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] text-muted-foreground">{profile.displayName}</span>
+                        {profile.profileUrl ? (
+                          <a 
+                            href={profile.profileUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            {profile.displayName}
+                          </a>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground">{profile.displayName}</span>
+                        )}
                         <span className="text-[10px] text-muted-foreground/30">•</span>
                         <span className="text-[10px] text-muted-foreground px-1 py-0 rounded bg-secondary/50 border border-border/30">{profile.category}</span>
                       </div>

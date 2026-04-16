@@ -113,34 +113,46 @@ export const mockProfiles: XProfile[] = [
 export const mockProjects: Project[] = [
   {
     id: 'p1',
-    title: 'Media Outlets',
+    name: 'Media Outlets',
+    ticker: '$NEWS',
     description: 'A collection of global news and media accounts.',
-    profileCount: 124,
-    updatedAt: '2026-04-15',
-    thumbnailUrl: 'https://picsum.photos/seed/media/400/200'
+    type: 'COMMUNITY',
+    pnl: '+24.5%',
+    avatarUrl: 'https://picsum.photos/seed/media/400/200',
+    bannerUrl: 'https://picsum.photos/seed/media-banner/1200/400',
+    createdAt: '2026-04-15'
   },
   {
     id: 'p2',
-    title: 'Tech Influencers',
+    name: 'Tech Influencers',
+    ticker: '$TECH',
     description: 'Top voices in technology and software engineering.',
-    profileCount: 45,
-    updatedAt: '2026-04-12',
-    thumbnailUrl: 'https://picsum.photos/seed/tech/400/200'
+    type: 'PERSONAL_PAGE',
+    pnl: '+12.8%',
+    avatarUrl: 'https://picsum.photos/seed/tech/400/200',
+    bannerUrl: 'https://picsum.photos/seed/tech-banner/1200/400',
+    createdAt: '2026-04-12'
   },
   {
     id: 'p3',
-    title: 'Political Watch',
+    name: 'Political Watch',
+    ticker: '$POL',
     description: 'Key political figures and government agencies.',
-    profileCount: 88,
-    updatedAt: '2026-04-10',
-    thumbnailUrl: 'https://picsum.photos/seed/gov/400/200'
+    type: 'PROJECT_WITH_WEBSITE',
+    pnl: '-5.2%',
+    avatarUrl: 'https://picsum.photos/seed/gov/400/200',
+    bannerUrl: 'https://picsum.photos/seed/gov-banner/1200/400',
+    createdAt: '2026-04-10'
   },
   {
     id: 'p4',
-    title: 'Crypto Analysts',
+    name: 'Crypto Analysts',
+    ticker: '$CRYPTO',
     description: 'Top research and analysis accounts for crypto.',
-    profileCount: 32,
-    updatedAt: '2026-04-08',
-    thumbnailUrl: 'https://picsum.photos/seed/crypto/400/200'
+    type: 'COMMUNITY',
+    pnl: '+156.4%',
+    avatarUrl: 'https://picsum.photos/seed/crypto/400/200',
+    bannerUrl: 'https://picsum.photos/seed/crypto-banner/1200/400',
+    createdAt: '2026-04-08'
   }
 ];
