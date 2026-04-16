@@ -13,7 +13,7 @@ export const mockProfiles: XProfile[] = [
     status: 'ACTIVE',
     email: 'admin@filmfare.com',
     password: 'secret_password_123',
-    twoFactorSeed: 'JBSWY3DPEHPK3PXP',
+    recoveryEmail: 'recovery@filmfare.com',
     notes: 'Premium account'
   },
   {
@@ -67,7 +67,7 @@ export const mockProfiles: XProfile[] = [
     status: 'ACTIVE',
     email: 'ramdev@yoga.in',
     password: 'yoga_life_108',
-    twoFactorSeed: 'KRSXG5CTKPSXG5CT'
+    recoveryEmail: 'backup@yoga.in'
   },
   {
     id: '6',

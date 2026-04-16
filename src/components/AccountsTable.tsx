@@ -43,7 +43,7 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
           <TableRow className="hover:bg-transparent border-border">
             <TableHead className="w-[240px] text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Account</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Status</TableHead>
-            <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Auth Details (Encrypted)</TableHead>
+            <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12">Auth Details</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground text-right h-12">Followers</TableHead>
             <TableHead className="text-[11px] font-bold uppercase tracking-[0.05em] text-muted-foreground h-12 text-center">Actions</TableHead>
           </TableRow>
@@ -108,24 +108,24 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      {renderHiddenField(profile.id + '-email', profile.email, "Email hidden")}
-                      <button 
-                        onClick={() => toggleVisibility(profile.id + '-email')}
-                        className="p-1 hover:bg-secondary rounded opacity-40 hover:opacity-100 transition-all"
-                      >
-                        {visibleFields[profile.id + '-email'] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                      </button>
+                  <div className="flex flex-col gap-1.5 py-1">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-tighter leading-none mb-0.5">Email</span>
+                      <span className="text-[11px] font-mono text-foreground bg-secondary/20 px-1.5 py-0.5 rounded border border-border/30 truncate max-w-[180px]">
+                        {profile.email || '—'}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {renderHiddenField(profile.id + '-pass', profile.password, "Pass hidden")}
-                      <button 
-                        onClick={() => toggleVisibility(profile.id + '-pass')}
-                        className="p-1 hover:bg-secondary rounded opacity-40 hover:opacity-100 transition-all"
-                      >
-                        {visibleFields[profile.id + '-pass'] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                      </button>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-tighter leading-none mb-0.5">Password</span>
+                      <span className="text-[11px] font-mono text-foreground bg-secondary/20 px-1.5 py-0.5 rounded border border-border/30 truncate max-w-[180px]">
+                        {profile.password || '—'}
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-tighter leading-none mb-0.5">Recovery</span>
+                      <span className="text-[11px] font-mono text-foreground bg-secondary/20 px-1.5 py-0.5 rounded border border-border/30 truncate max-w-[180px]">
+                        {profile.recoveryEmail || '—'}
+                      </span>
                     </div>
                   </div>
                 </TableCell>
@@ -148,17 +148,6 @@ export function AccountsTable({ profiles, onEdit, onDelete }: AccountsTableProps
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
-                    <div className="w-px h-4 bg-border mx-1" />
-                    <div className="flex items-center space-x-1 px-1">
-                      <Shield className={`h-3 w-3 ${profile.twoFactorSeed ? 'text-accent-green' : 'text-muted-foreground/30'}`} />
-                      <button 
-                        disabled={!profile.twoFactorSeed}
-                        onClick={() => toggleVisibility(profile.id + '-2fa')}
-                        className="p-1 hover:bg-secondary rounded opacity-40 hover:opacity-100 transition-all disabled:opacity-0"
-                      >
-                        {visibleFields[profile.id + '-2fa'] ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                      </button>
-                    </div>
                   </div>
                 </TableCell>
               </TableRow>

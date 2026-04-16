@@ -19,6 +19,10 @@ function Dashboard() {
   const [editingProfile, setEditingProfile] = useState<XProfile | null>(null);
   const [loading, setLoading] = useState(true);
   
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
   // Filter & Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'ALL'>('ALL');
@@ -55,7 +59,7 @@ function Dashboard() {
           status: item.status,
           email: item.email,
           password: item.password,
-          twoFactorSeed: item.two_fa_seed,
+          recoveryEmail: item.recovery_email,
           notes: item.notes
         }));
         setProfiles(mappedData);
@@ -104,46 +108,44 @@ function Dashboard() {
   const handleSaveProfile = async (profileData: Partial<XProfile>) => {
     try {
       const payload = {
-        handle: profileData.handle,
-        display_name: profileData.displayName,
-        followers: profileData.followers,
-        category: profileData.category,
-        status: profileData.status,
-        email: profileData.email,
-        password: profileData.password,
-        two_fa_seed: profileData.twoFactorSeed,
-        notes: profileData.notes,
-        badge: profileData.badge,
-        avatar_url: profileData.avatarUrl
+        handle: profileData.handle || '',
+        display_name: profileData.displayName || '',
+        followers: Number(profileData.followers) || 0,
+        category: profileData.category || 'TECH',
+        status: profileData.status || 'ACTIVE',
+        email: profileData.email || '',
+        password: profileData.password || '',
+        recovery_email: profileData.recoveryEmail || '',
+        notes: profileData.notes || '',
+        badge: profileData.badge || 'NONE',
+        avatar_url: profileData.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profileData.handle || 'default'}`
       };
 
+      let result;
       if (editingProfile) {
-        const { error } = await supabase
+        result = await supabase
           .from('accounts')
           .update(payload)
           .eq('id', editingProfile.id);
-        if (error) throw error;
       } else {
-        const { error } = await supabase
+        result = await supabase
           .from('accounts')
           .insert([payload]);
-        if (error) throw error;
       }
       
-      fetchProfiles();
-    } catch (err) {
-      console.error('Error saving profile:', err);
-      // Fallback for prototype
-      if (editingProfile) {
-        setProfiles(profiles.map(p => p.id === editingProfile.id ? { ...p, ...profileData } as XProfile : p));
-      } else {
-        const newProfile: XProfile = {
-          ...profileData,
-          id: Math.random().toString(36).substr(2, 9),
-          addedDate: new Date().toISOString().split('T')[0],
-        } as XProfile;
-        setProfiles([newProfile, ...profiles]);
+      if (result.error) {
+        console.error('Supabase Error:', result.error);
+        alert(`database error: ${result.error.message}\n\nMake sure you have disabled RLS or added a policy in Supabase Dashboard -> SQL Editor.`);
+        return;
       }
+      
+      // Success path
+      await fetchProfiles();
+      setIsModalOpen(false);
+      setEditingProfile(null);
+    } catch (err) {
+      console.error('Critical save error:', err);
+      alert('A critical error occurred while saving. Check the console for details.');
     }
   };
 
@@ -157,6 +159,15 @@ function Dashboard() {
     if (sortBy === 'followers') return b.followers - a.followers;
     return b.addedDate.localeCompare(a.addedDate);
   });
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredProfiles.length / itemsPerPage);
+  const paginatedProfiles = filteredProfiles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent-blue selection:text-white flex flex-col">
@@ -197,19 +208,29 @@ function Dashboard() {
                   </div>
                 ) : (
                   <AccountsTable 
-                    profiles={filteredProfiles} 
+                    profiles={paginatedProfiles} 
                     onEdit={handleEditProfile}
                     onDelete={handleDeleteProfile}
                   />
                 )}
                 
-                <div className="mt-8 flex items-center justify-center space-x-1">
-                  <div className="h-8 w-8 rounded border border-border bg-card text-foreground flex items-center justify-center text-xs font-medium">1</div>
-                  <div className="h-8 w-8 rounded border border-transparent hover:border-border transition-colors flex items-center justify-center text-xs font-medium cursor-pointer text-muted-foreground hover:text-foreground">2</div>
-                  <div className="h-8 w-8 rounded border border-transparent hover:border-border transition-colors flex items-center justify-center text-xs font-medium cursor-pointer text-muted-foreground hover:text-foreground">3</div>
-                  <span className="text-muted-foreground px-1 self-center pb-1">...</span>
-                  <div className="h-8 w-8 rounded border border-transparent hover:border-border transition-colors flex items-center justify-center text-xs font-medium cursor-pointer text-muted-foreground hover:text-foreground">23</div>
-                </div>
+                {totalPages > 1 && (
+                  <div className="mt-8 flex items-center justify-center space-x-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`h-8 w-8 rounded border transition-colors flex items-center justify-center text-xs font-medium ${
+                          currentPage === page 
+                            ? 'border-border bg-card text-foreground' 
+                            : 'border-transparent hover:border-border text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -232,7 +253,7 @@ function Dashboard() {
 
       <footer className="border-t border-border py-4 mt-auto">
         <div className="container mx-auto px-4 flex items-center justify-between text-[11px] text-muted-foreground">
-          <div>Showing {mockProfiles.length} profiles</div>
+          <div>Showing {profiles.length} profiles</div>
           <div className="flex items-center space-x-2">
             <span>System Status:</span>
             <span className="text-accent-green font-medium">All Nodes Active</span>

@@ -15,7 +15,7 @@ CREATE TABLE accounts (
   status TEXT CHECK (status IN ('ACTIVE', 'BANNED')) DEFAULT 'ACTIVE',
   email TEXT,
   password TEXT,
-  two_fa_seed TEXT,
+  recovery_email TEXT,
   notes TEXT,
   badge TEXT CHECK (badge IN ('GOLD', 'BLUE', 'NONE')) DEFAULT 'NONE',
   avatar_url TEXT,

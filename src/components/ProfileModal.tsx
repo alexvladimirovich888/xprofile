@@ -36,7 +36,7 @@ export function ProfileModal({ isOpen, onClose, onSave, initialData }: ProfileMo
     followers: 0,
     email: '',
     password: '',
-    twoFactorSeed: '',
+    recoveryEmail: '',
     notes: '',
     status: 'ACTIVE',
     badge: 'NONE',
@@ -54,7 +54,7 @@ export function ProfileModal({ isOpen, onClose, onSave, initialData }: ProfileMo
         followers: 0,
         email: '',
         password: '',
-        twoFactorSeed: '',
+        recoveryEmail: '',
         notes: '',
         status: 'ACTIVE',
         badge: 'NONE',
@@ -198,13 +198,14 @@ export function ProfileModal({ isOpen, onClose, onSave, initialData }: ProfileMo
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="2fa" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">2FA Seed</Label>
+                <Label htmlFor="recovery" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Recovery Email</Label>
                 <Input
-                  id="2fa"
-                  className="bg-background border-border font-mono"
-                  value={formData.twoFactorSeed}
-                  onChange={(e) => setFormData({ ...formData, twoFactorSeed: e.target.value })}
-                  placeholder="JBSW..."
+                  id="recovery"
+                  type="email"
+                  className="bg-background border-border"
+                  value={formData.recoveryEmail}
+                  onChange={(e) => setFormData({ ...formData, recoveryEmail: e.target.value })}
+                  placeholder="recovery@example.com"
                 />
               </div>
             </div>

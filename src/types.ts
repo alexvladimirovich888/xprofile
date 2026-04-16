@@ -12,7 +12,7 @@ export interface XProfile {
   status: 'ACTIVE' | 'BANNED';
   email?: string;
   password?: string;
-  twoFactorSeed?: string;
+  recoveryEmail?: string;
   notes?: string;
 }
 
