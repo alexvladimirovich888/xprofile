@@ -1,7 +1,7 @@
 import React from 'react';
 import { Project } from '@/src/types';
 import { motion } from 'motion/react';
-import { ArrowLeft, ExternalLink, TrendingUp, Info, Tag, Layers, Users } from 'lucide-react';
+import { ArrowLeft, ExternalLink, TrendingUp, Info, Tag, Layers, Users, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -11,6 +11,25 @@ interface ProjectDetailViewProps {
 }
 
 export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback: open in new tab
+      window.open(url, '_blank');
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -43,7 +62,7 @@ export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
                 <Layers className="h-20 w-20" />
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
           </div>
           
           <div className="px-8 pb-10 -mt-16 sm:-mt-20 relative z-10 flex flex-col sm:flex-row items-center sm:items-end gap-6">
@@ -143,6 +162,31 @@ export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
                     <span className="text-[8px] font-black text-muted-foreground uppercase absolute top-2 right-4">Recovery</span>
                     <p className="text-xs font-bold mt-1">{project.recoveryEmail || 'NONE'}</p>
                   </div>
+                </div>
+              </section>
+
+              <section className="space-y-6 pt-4 border-t border-border">
+                <div className="flex items-center space-x-2 text-muted-foreground font-black text-[10px] tracking-[0.2em] uppercase">
+                  <Download className="h-4 w-4" />
+                  <span>Download Assets</span>
+                </div>
+                <div className="space-y-3">
+                  <Button 
+                    variant="outline"
+                    className="w-full border-border bg-card hover:bg-accent-blue hover:text-white font-black h-12 rounded-xl transition-all"
+                    onClick={() => project.avatarUrl && handleDownload(project.avatarUrl, `${project.ticker || 'avatar'}_logo.png`)}
+                    disabled={!project.avatarUrl}
+                  >
+                    DOWNLOAD AVATAR
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="w-full border-border bg-card hover:bg-accent-blue hover:text-white font-black h-12 rounded-xl transition-all"
+                    onClick={() => project.bannerUrl && handleDownload(project.bannerUrl, `${project.ticker || 'banner'}_banner.png`)}
+                    disabled={!project.bannerUrl}
+                  >
+                    DOWNLOAD BANNER
+                  </Button>
                 </div>
               </section>
             </div>

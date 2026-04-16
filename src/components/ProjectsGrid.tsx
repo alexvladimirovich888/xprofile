@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Project } from '@/src/types';
-import { Users, Clock, ArrowRight, Edit2, Trash2 } from 'lucide-react';
+import { Users, Clock, ArrowRight, Edit2, Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
 
@@ -14,6 +14,24 @@ interface ProjectsGridProps {
 }
 
 export function ProjectsGrid({ projects, onProjectClick, onEdit, onDelete }: ProjectsGridProps) {
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed:', error);
+      window.open(url, '_blank');
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {projects.map((project, index) => (
@@ -44,6 +62,16 @@ export function ProjectsGrid({ projects, onProjectClick, onEdit, onDelete }: Pro
                 className="p-1.5 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-white rounded border border-border transition-colors shadow-lg"
               >
                 <Trash2 className="h-3 w-3" />
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (project.avatarUrl) handleDownload(project.avatarUrl, `${project.ticker || 'avatar'}_logo.png`);
+                }}
+                className="p-1.5 bg-background/80 backdrop-blur-sm hover:bg-accent-green hover:text-white rounded border border-border transition-colors shadow-lg"
+                title="Download Avatar"
+              >
+                <Download className="h-3 w-3" />
               </button>
             </div>
             
