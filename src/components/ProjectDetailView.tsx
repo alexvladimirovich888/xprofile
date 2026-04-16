@@ -1,7 +1,7 @@
 import React from 'react';
 import { Project } from '@/src/types';
 import { motion } from 'motion/react';
-import { ArrowLeft, ExternalLink, TrendingUp, Info, Tag, Layers } from 'lucide-react';
+import { ArrowLeft, ExternalLink, TrendingUp, Info, Tag, Layers, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -30,26 +30,38 @@ export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
         
         <div className="relative group rounded-3xl overflow-hidden border border-border bg-card shadow-2xl">
           {/* Banner */}
-          <div className="h-64 sm:h-80 w-full overflow-hidden relative">
-            <img 
-              src={project.bannerUrl || "https://picsum.photos/seed/banner/1200/400"} 
-              alt="Banner" 
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+          <div className="h-64 sm:h-80 w-full overflow-hidden relative bg-secondary flex items-center justify-center">
+            {project.bannerUrl ? (
+              <img 
+                src={project.bannerUrl} 
+                alt="Banner" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center text-muted-foreground opacity-20">
+                <Layers className="h-20 w-20" />
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           </div>
           
           <div className="px-8 pb-10 -mt-16 sm:-mt-20 relative z-10 flex flex-col sm:flex-row items-center sm:items-end gap-6">
             {/* Avatar */}
             <div className="relative">
-              <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-3xl border-4 border-card bg-card overflow-hidden shadow-2xl">
-                <img 
-                  src={project.avatarUrl || "https://picsum.photos/seed/avatar/200/200"} 
-                  alt={project.name} 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
+              <div className="h-32 w-32 sm:h-40 sm:w-40 rounded-3xl border-4 border-card bg-card overflow-hidden shadow-2xl flex items-center justify-center">
+                {project.avatarUrl ? (
+                  <img 
+                    src={project.avatarUrl} 
+                    alt={project.name} 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="bg-secondary w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Users className="h-12 w-12 opacity-30" />
+                  </div>
+                )}
               </div>
             </div>
             

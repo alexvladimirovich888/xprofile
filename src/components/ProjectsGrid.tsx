@@ -47,13 +47,20 @@ export function ProjectsGrid({ projects, onProjectClick, onEdit, onDelete }: Pro
               </button>
             </div>
             
-            <div className="relative h-40 overflow-hidden">
-              <img 
-                src={project.avatarUrl || `https://picsum.photos/seed/${project.id}/400/200`} 
-                alt={project.name}
-                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-                referrerPolicy="no-referrer"
-              />
+            <div className="relative h-40 overflow-hidden bg-secondary flex items-center justify-center">
+              {project.avatarUrl ? (
+                <img 
+                  src={project.avatarUrl} 
+                  alt={project.name}
+                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-muted-foreground opacity-40">
+                   <Badge className="bg-muted text-[8px] mb-2">NO IMAGE</Badge>
+                   <Users className="h-10 w-10" />
+                </div>
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
               <div className="absolute top-3 right-3">
                  <Badge className="bg-accent-blue text-white font-black text-[10px] tracking-widest">{project.ticker}</Badge>

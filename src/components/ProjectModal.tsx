@@ -44,10 +44,17 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
     avatarUrl: '',
     bannerUrl: '',
   });
+  
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [bannerPreview, setBannerPreview] = useState<string>('');
 
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
+      setAvatarPreview(initialData.avatarUrl || '');
+      setBannerPreview(initialData.bannerUrl || '');
     } else {
       setFormData({
         name: '',
@@ -58,6 +65,10 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
         avatarUrl: '',
         bannerUrl: '',
       });
+      setAvatarPreview('');
+      setBannerPreview('');
+      setAvatarFile(null);
+      setBannerFile(null);
     }
   }, [initialData, isOpen]);
 
@@ -65,21 +76,29 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
     e.preventDefault();
     setIsSaving(true);
     try {
-      await onSave(formData);
+      // Create a combined data object including the raw File objects
+      const savePayload = {
+        ...formData,
+        _avatarFile: avatarFile,
+        _bannerFile: bannerFile
+      };
+      await onSave(savePayload as any);
       onClose();
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleFileUpload = (field: 'avatarUrl' | 'bannerUrl') => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (field: 'avatar' | 'banner') => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, [field]: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
+      if (field === 'avatar') {
+        setAvatarFile(file);
+        setAvatarPreview(URL.createObjectURL(file));
+      } else {
+        setBannerFile(file);
+        setBannerPreview(URL.createObjectURL(file));
+      }
     }
   };
 
@@ -149,8 +168,8 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Avatar Image</Label>
               <div className="relative group border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:border-accent-blue/50 transition-colors">
-                {formData.avatarUrl ? (
-                  <img src={formData.avatarUrl} alt="Avatar" className="h-20 w-20 rounded-full object-cover mb-4" />
+                {avatarPreview ? (
+                  <img src={avatarPreview} alt="Avatar" className="h-20 w-20 rounded-full object-cover mb-4" />
                 ) : (
                   <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
                 )}
@@ -158,7 +177,7 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
                   type="file"
                   accept="image/*"
                   className="absolute inset-0 opacity-0 cursor-pointer"
-                  onChange={handleFileUpload('avatarUrl')}
+                  onChange={handleFileUpload('avatar')}
                 />
                 <span className="text-[10px] text-muted-foreground">Click to upload avatar</span>
               </div>
@@ -166,8 +185,8 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
             <div className="space-y-2">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Banner Image</Label>
               <div className="relative group border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:border-accent-blue/50 transition-colors">
-                {formData.bannerUrl ? (
-                  <img src={formData.bannerUrl} alt="Banner" className="h-20 w-40 rounded object-cover mb-4" />
+                {bannerPreview ? (
+                  <img src={bannerPreview} alt="Banner" className="h-20 w-40 rounded object-cover mb-4" />
                 ) : (
                   <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
                 )}
@@ -175,7 +194,7 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
                   type="file"
                   accept="image/*"
                   className="absolute inset-0 opacity-0 cursor-pointer"
-                  onChange={handleFileUpload('bannerUrl')}
+                  onChange={handleFileUpload('banner')}
                 />
                 <span className="text-[10px] text-muted-foreground">Click to upload banner</span>
               </div>

@@ -12,6 +12,7 @@ import { ProjectModal } from './components/ProjectModal';
 import { ProjectDetailView } from './components/ProjectDetailView';
 import { XProfile, Category, Project, ProjectType } from './types';
 import { supabase } from './lib/supabase';
+import { uploadFile } from './lib/storage';
 import { Loader2 } from 'lucide-react';
 
 function Dashboard() {
@@ -28,6 +29,8 @@ function Dashboard() {
   
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [dbError, setDbError] = useState<string | null>(null);
+  const [usingMockData, setUsingMockData] = useState(false);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,13 +53,17 @@ function Dashboard() {
 
   const fetchProjects = async () => {
     setProjectsLoading(true);
+    setDbError(null);
     try {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+         console.error('Fetch error:', error);
+         throw error;
+      }
 
       if (data && data.length > 0) {
         const mappedData: Project[] = data.map(item => ({
@@ -71,14 +78,18 @@ function Dashboard() {
           createdAt: item.created_at
         }));
         setProjects(mappedData);
+        setUsingMockData(false);
       } else {
-        // Fallback to mock projects if none in DB
-        setProjects(mockProjects);
+        // Only use mock data if DB is empty AND it matches the initial state
+        console.log('No projects found in Supabase.');
+        setProjects([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching projects:', err);
-      // Fallback to mock projects if DB fails
+      setDbError(err.message || 'Connection failed');
+      // If we can't connect, show mock data so the site isn't broken
       setProjects(mockProjects);
+      setUsingMockData(true);
     } finally {
       setProjectsLoading(false);
     }
@@ -136,16 +147,27 @@ function Dashboard() {
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = async (projectData: Partial<Project>) => {
+  const handleSaveProject = async (projectData: Partial<Project> & { _avatarFile?: File; _bannerFile?: File }) => {
     try {
+      let avatarUrl = projectData.avatarUrl || '';
+      let bannerUrl = projectData.bannerUrl || '';
+
+      // Handle Image Uploads via Storage
+      if (projectData._avatarFile) {
+        avatarUrl = await uploadFile(projectData._avatarFile);
+      }
+      if (projectData._bannerFile) {
+        bannerUrl = await uploadFile(projectData._bannerFile);
+      }
+
       const payload = {
         name: projectData.name || '',
         ticker: projectData.ticker || '',
         description: projectData.description || '',
         type: projectData.type || 'COMMUNITY',
         pnl: projectData.pnl || '0%',
-        avatar_url: projectData.avatarUrl || '',
-        banner_url: projectData.bannerUrl || '',
+        avatar_url: avatarUrl,
+        banner_url: bannerUrl,
       };
 
       let result;
@@ -167,12 +189,22 @@ function Dashboard() {
 
       await fetchProjects();
       setActiveTab('projects');
+      setIsProjectModalOpen(false);
+      setEditingProject(null);
     } catch (err: any) {
       console.error('Error saving project:', err);
-      alert(`Error saving project: ${err.message || 'Unknown error'}\n\nMake sure the "projects" table is created in Supabase SQL editor.`);
+      const isStorageError = err.message?.includes('bucket');
       
-      // Local addition for better UX if DB fails
-      if (!editingProject) {
+      const errorMessage = isStorageError 
+        ? `Storage Error: ${err.message}. Please make sure you have created a public bucket named "project-assets" in Supabase Storage.`
+        : err.message?.includes('column')
+          ? `Database Schema Error: ${err.message}. It looks like some columns are missing in your "projects" table. Please run the "Sync/Repair SQL" from SUPABASE_SCHEMA.md.`
+          : `Error saving project: ${err.message || 'Unknown error'}. Make sure the "projects" table is created.`;
+
+      alert(errorMessage);
+      
+      // Local fallback for UI continuity
+      if (!editingProject && !isStorageError) {
         const newLocalProject: Project = {
           id: Math.random().toString(36).substr(2, 9),
           name: projectData.name || 'New Project',
@@ -186,6 +218,7 @@ function Dashboard() {
         };
         setProjects([newLocalProject, ...projects]);
         setActiveTab('projects');
+        setIsProjectModalOpen(false);
       }
     }
   };
@@ -385,7 +418,14 @@ function Dashboard() {
             ) : (
               <>
                 <div className="flex items-center justify-between mb-8">
-                  <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+                  <div>
+                    <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+                    {usingMockData && (
+                      <div className="mt-1 flex items-center text-[10px] text-amber-500 font-bold uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                         ⚠️ Using Local Database (Cloud Connection Offline)
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mr-2">Sort By</span>
                     <select
