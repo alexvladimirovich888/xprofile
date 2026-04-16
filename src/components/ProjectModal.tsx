@@ -43,6 +43,10 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
     pnl: '',
     avatarUrl: '',
     bannerUrl: '',
+    email: '',
+    password: '',
+    recoveryEmail: '',
+    websiteUrl: '',
   });
   
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -64,6 +68,10 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
         pnl: '',
         avatarUrl: '',
         bannerUrl: '',
+        email: '',
+        password: '',
+        recoveryEmail: '',
+        websiteUrl: '',
       });
       setAvatarPreview('');
       setBannerPreview('');
@@ -202,14 +210,60 @@ export function ProjectModal({ isOpen, onClose, onSave, initialData }: ProjectMo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="desc" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Description</Label>
+            <Label htmlFor="desc" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Text for X Post</Label>
             <Textarea
               id="desc"
-              className="bg-background min-h-[100px]"
+              className="bg-background min-h-[120px]"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Tell us about this project..."
+              placeholder="Write the post content here..."
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">X Profile Email</Label>
+              <Input
+                id="email"
+                className="bg-background"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="project@example.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="pass" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Password</Label>
+              <Input
+                id="pass"
+                className="bg-background"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="rec_email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Recovery Email</Label>
+              <Input
+                id="rec_email"
+                className="bg-background"
+                value={formData.recoveryEmail}
+                onChange={(e) => setFormData({ ...formData, recoveryEmail: e.target.value })}
+                placeholder="recovery@example.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="website" className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-foreground">Website URL</Label>
+              <Input
+                id="website"
+                className="bg-background"
+                value={formData.websiteUrl}
+                onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
+                placeholder="https://example.com"
+              />
+            </div>
           </div>
 
           <DialogFooter className="pt-2">

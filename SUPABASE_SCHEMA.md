@@ -9,6 +9,10 @@ If you already have a `projects` table but see errors about "missing columns", r
 -- Safely add missing columns to projects table
 DO $$ 
 BEGIN 
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='title') THEN
+    ALTER TABLE projects ADD COLUMN title TEXT;
+  END IF;
+
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='ticker') THEN
     ALTER TABLE projects ADD COLUMN ticker TEXT;
   END IF;
@@ -31,6 +35,22 @@ BEGIN
 
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='banner_url') THEN
     ALTER TABLE projects ADD COLUMN banner_url TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='email') THEN
+    ALTER TABLE projects ADD COLUMN email TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='password') THEN
+    ALTER TABLE projects ADD COLUMN password TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='recovery_email') THEN
+    ALTER TABLE projects ADD COLUMN recovery_email TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='website_url') THEN
+    ALTER TABLE projects ADD COLUMN website_url TEXT;
   END IF;
 END $$;
 ```
@@ -59,13 +79,17 @@ CREATE TABLE accounts (
 -- Projects Table
 CREATE TABLE projects (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
+  title TEXT NOT NULL,
   ticker TEXT,
   description TEXT,
   type TEXT CHECK (type IN ('COMMUNITY', 'PERSONAL_PAGE', 'PROJECT_WITH_WEBSITE')),
   pnl TEXT,
   avatar_url TEXT,
   banner_url TEXT,
+  email TEXT,
+  password TEXT,
+  recovery_email TEXT,
+  website_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

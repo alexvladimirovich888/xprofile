@@ -91,10 +91,12 @@ export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
             <div className="lg:col-span-2 p-8 space-y-8 border-r border-border bg-card">
               <section className="space-y-4">
                 <div className="flex items-center space-x-2 text-accent-blue font-black text-[10px] tracking-[0.2em] uppercase">
-                  <Info className="h-4 w-4" />
-                  <span>About Project</span>
+                  <span className="bg-accent-blue/10 p-1.5 rounded-lg">
+                    <Info className="h-4 w-4" />
+                  </span>
+                  <span>Text for X Post</span>
                 </div>
-                <div className="text-muted-foreground leading-relaxed text-sm bg-secondary/30 p-6 rounded-2xl border border-border/50">
+                <div className="text-foreground leading-relaxed text-sm bg-secondary/30 p-6 rounded-2xl border border-border/50 whitespace-pre-wrap font-sans">
                   {project.description}
                 </div>
               </section>
@@ -112,12 +114,11 @@ export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
                 
                 <div className="p-6 rounded-2xl border border-border bg-background space-y-4">
                   <div className="flex items-center space-x-2 text-muted-foreground font-black text-[10px] tracking-[0.2em] uppercase">
-                    <Tag className="h-4 w-4" />
-                    <span>Market Data</span>
+                    <ExternalLink className="h-4 w-4" />
+                    <span>Website</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-foreground text-sm font-bold bg-card p-4 rounded-xl border border-border">
-                    <TrendingUp className="h-4 w-4 text-accent-green" />
-                    <span>Live Analysis Enabled</span>
+                  <div className="flex items-center space-x-2 text-foreground text-sm font-bold bg-card p-4 rounded-xl border border-border overflow-hidden">
+                    <span className="truncate">{project.websiteUrl || 'NONE'}</span>
                   </div>
                 </div>
               </section>
@@ -126,23 +127,24 @@ export function ProjectDetailView({ project, onBack }: ProjectDetailViewProps) {
             <div className="p-8 bg-secondary/10 space-y-8">
               <section className="space-y-6">
                 <div className="flex items-center space-x-2 text-muted-foreground font-black text-[10px] tracking-[0.2em] uppercase">
-                  <ExternalLink className="h-4 w-4" />
-                  <span>Connect</span>
+                  <Tag className="h-4 w-4" />
+                  <span>X Login Details</span>
                 </div>
-                <div className="space-y-3">
-                  <Button className="w-full bg-accent-blue text-white hover:bg-accent-blue/90 font-black h-12 rounded-xl">
-                    VISIT WEBSITE
-                  </Button>
-                  <Button variant="outline" className="w-full border-border bg-card hover:bg-secondary font-black h-12 rounded-xl">
-                    JOIN COMMUNITY
-                  </Button>
+                <div className="space-y-4">
+                  <div className="bg-card p-4 rounded-xl border border-border group relative">
+                    <span className="text-[8px] font-black text-muted-foreground uppercase absolute top-2 right-4">Email</span>
+                    <p className="text-xs font-bold mt-1">{project.email || 'NONE'}</p>
+                  </div>
+                  <div className="bg-card p-4 rounded-xl border border-border group relative">
+                    <span className="text-[8px] font-black text-muted-foreground uppercase absolute top-2 right-4">Password</span>
+                    <p className="text-xs font-bold mt-1 font-mono tracking-tighter">{project.password || 'NONE'}</p>
+                  </div>
+                  <div className="bg-card p-4 rounded-xl border border-border group relative">
+                    <span className="text-[8px] font-black text-muted-foreground uppercase absolute top-2 right-4">Recovery</span>
+                    <p className="text-xs font-bold mt-1">{project.recoveryEmail || 'NONE'}</p>
+                  </div>
                 </div>
               </section>
-              
-              <div className="p-6 rounded-2xl bg-accent-yellow/5 border border-accent-yellow/20 space-y-2">
-                <span className="text-[10px] font-black text-accent-yellow uppercase tracking-widest">Internal Status</span>
-                <p className="text-xs text-muted-foreground">This project is currently being monitored for abnormal liquidity shifts.</p>
-              </div>
             </div>
           </div>
         </div>

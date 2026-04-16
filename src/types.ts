@@ -29,4 +29,8 @@ export interface Project {
   avatarUrl: string;
   bannerUrl: string;
   createdAt: string;
+  email?: string;
+  password?: string;
+  recoveryEmail?: string;
+  websiteUrl?: string;
 }

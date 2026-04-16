@@ -68,14 +68,18 @@ function Dashboard() {
       if (data && data.length > 0) {
         const mappedData: Project[] = data.map(item => ({
           id: item.id,
-          name: item.name,
+          name: item.title || item.name || 'Untitled', // Support both title and fallback
           ticker: item.ticker,
           description: item.description,
           type: item.type as ProjectType,
           pnl: item.pnl,
           avatarUrl: item.avatar_url,
           bannerUrl: item.banner_url,
-          createdAt: item.created_at
+          createdAt: item.created_at,
+          email: item.email,
+          password: item.password,
+          recoveryEmail: item.recovery_email,
+          websiteUrl: item.website_url
         }));
         setProjects(mappedData);
         setUsingMockData(false);
@@ -161,13 +165,17 @@ function Dashboard() {
       }
 
       const payload = {
-        name: projectData.name || '',
+        title: projectData.name || '',
         ticker: projectData.ticker || '',
         description: projectData.description || '',
         type: projectData.type || 'COMMUNITY',
         pnl: projectData.pnl || '0%',
         avatar_url: avatarUrl,
         banner_url: bannerUrl,
+        email: projectData.email || '',
+        password: projectData.password || '',
+        recovery_email: projectData.recoveryEmail || '',
+        website_url: projectData.websiteUrl || '',
       };
 
       let result;
