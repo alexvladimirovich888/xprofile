@@ -2,16 +2,18 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Project } from '@/src/types';
-import { Users, Clock, ArrowRight } from 'lucide-react';
+import { Users, Clock, ArrowRight, Edit2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
 
 interface ProjectsGridProps {
   projects: Project[];
   onProjectClick: (project: Project) => void;
+  onEdit: (project: Project) => void;
+  onDelete: (id: string) => void;
 }
 
-export function ProjectsGrid({ projects, onProjectClick }: ProjectsGridProps) {
+export function ProjectsGrid({ projects, onProjectClick, onEdit, onDelete }: ProjectsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {projects.map((project, index) => (
@@ -23,7 +25,28 @@ export function ProjectsGrid({ projects, onProjectClick }: ProjectsGridProps) {
           onClick={() => onProjectClick(project)}
           className="cursor-pointer"
         >
-          <Card className="group overflow-hidden border-border bg-card hover:border-accent-blue/40 transition-all duration-300">
+          <Card className="group overflow-hidden border-border bg-card hover:border-accent-blue/40 transition-all duration-300 relative">
+            <div className="absolute top-2 left-2 z-20 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(project);
+                }}
+                className="p-1.5 bg-background/80 backdrop-blur-sm hover:bg-accent-blue hover:text-white rounded border border-border transition-colors shadow-lg"
+              >
+                <Edit2 className="h-3 w-3" />
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(project.id);
+                }}
+                className="p-1.5 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-white rounded border border-border transition-colors shadow-lg"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+            
             <div className="relative h-40 overflow-hidden">
               <img 
                 src={project.avatarUrl || `https://picsum.photos/seed/${project.id}/400/200`} 

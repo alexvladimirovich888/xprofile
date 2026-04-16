@@ -37,6 +37,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'ALL'>('ALL');
   const [sortBy, setSortBy] = useState('recent');
+  const [projectSortBy, setProjectSortBy] = useState('recent');
 
   const { isAuthenticated } = useAuth();
 
@@ -57,7 +58,7 @@ function Dashboard() {
 
       if (error) throw error;
 
-      if (data) {
+      if (data && data.length > 0) {
         const mappedData: Project[] = data.map(item => ({
           id: item.id,
           name: item.name,
@@ -70,9 +71,14 @@ function Dashboard() {
           createdAt: item.created_at
         }));
         setProjects(mappedData);
+      } else {
+        // Fallback to mock projects if none in DB
+        setProjects(mockProjects);
       }
     } catch (err) {
       console.error('Error fetching projects:', err);
+      // Fallback to mock projects if DB fails
+      setProjects(mockProjects);
     } finally {
       setProjectsLoading(false);
     }
@@ -154,12 +160,55 @@ function Dashboard() {
           .insert([payload]);
       }
 
-      if (result.error) throw result.error;
+      if (result.error) {
+        console.error('Supabase Save Error:', result.error);
+        throw new Error(result.error.message);
+      }
 
       await fetchProjects();
-    } catch (err) {
+      setActiveTab('projects');
+    } catch (err: any) {
       console.error('Error saving project:', err);
-      alert('Error saving project to database.');
+      alert(`Error saving project: ${err.message || 'Unknown error'}\n\nMake sure the "projects" table is created in Supabase SQL editor.`);
+      
+      // Local addition for better UX if DB fails
+      if (!editingProject) {
+        const newLocalProject: Project = {
+          id: Math.random().toString(36).substr(2, 9),
+          name: projectData.name || 'New Project',
+          ticker: projectData.ticker || 'TICK',
+          description: projectData.description || '',
+          type: projectData.type || 'COMMUNITY',
+          pnl: projectData.pnl || '0%',
+          avatarUrl: projectData.avatarUrl || '',
+          bannerUrl: projectData.bannerUrl || '',
+          createdAt: new Date().toISOString()
+        };
+        setProjects([newLocalProject, ...projects]);
+        setActiveTab('projects');
+      }
+    }
+  };
+
+  const handleEditProject = (project: Project) => {
+    setEditingProject(project);
+    setIsProjectModalOpen(true);
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        const { error } = await supabase
+          .from('projects')
+          .delete()
+          .eq('id', id);
+        
+        if (error) throw error;
+        setProjects(projects.filter(p => p.id !== id));
+      } catch (err) {
+        console.error('Error deleting project:', err);
+        setProjects(projects.filter(p => p.id !== id));
+      }
     }
   };
 
@@ -235,7 +284,18 @@ function Dashboard() {
     }
   };
 
-  // Logic: Filter & Sort
+  // Projects Sorting Logic
+  const parsePnl = (pnlStr: string) => {
+    const numericPart = pnlStr.replace(/[^0-9.-]/g, '');
+    return parseFloat(numericPart) || 0;
+  };
+
+  const sortedProjects = [...projects].sort((a, b) => {
+    if (projectSortBy === 'pnl') {
+      return parsePnl(b.pnl) - parsePnl(a.pnl);
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
   const filteredProfiles = profiles.filter(p => {
     const matchesSearch = p.handle?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          p.displayName?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -324,12 +384,25 @@ function Dashboard() {
               </>
             ) : (
               <>
-                <div className="mb-8">
+                <div className="flex items-center justify-between mb-8">
                   <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mr-2">Sort By</span>
+                    <select
+                      value={projectSortBy}
+                      onChange={(e) => setProjectSortBy(e.target.value)}
+                      className="bg-card border border-border rounded text-[11px] font-bold h-8 px-2 focus:ring-1 focus:ring-accent-blue outline-none"
+                    >
+                      <option value="recent">Recently Added</option>
+                      <option value="pnl">Highest PNL</option>
+                    </select>
+                  </div>
                 </div>
                 <ProjectsGrid 
-                  projects={projects} 
+                  projects={sortedProjects} 
                   onProjectClick={handleProjectClick}
+                  onEdit={handleEditProject}
+                  onDelete={handleDeleteProject}
                 />
 
                 {projectsLoading && (
