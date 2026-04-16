@@ -7,9 +7,10 @@ import { useAuth } from './AuthContext';
 interface NavbarProps {
   activeTab: 'accounts' | 'projects';
   onTabChange: (tab: 'accounts' | 'projects') => void;
+  onAddProfile: () => void;
 }
 
-export function Navbar({ activeTab, onTabChange }: NavbarProps) {
+export function Navbar({ activeTab, onTabChange, onAddProfile }: NavbarProps) {
   const { logout } = useAuth();
 
   return (
@@ -46,7 +47,11 @@ export function Navbar({ activeTab, onTabChange }: NavbarProps) {
         </div>
 
         <div className="ml-auto flex items-center space-x-4">
-          <Button variant="default" className="bg-accent-green text-black hover:bg-accent-green/90 font-semibold px-4 py-2 h-9 rounded-md border-none">
+          <Button 
+            variant="default" 
+            onClick={onAddProfile}
+            className="bg-accent-green text-black hover:bg-accent-green/90 font-semibold px-4 py-2 h-9 rounded-md border-none"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Profile
           </Button>

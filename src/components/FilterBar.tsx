@@ -10,19 +10,52 @@ import {
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-export function FilterBar() {
+import { XProfile, Category } from '@/src/types';
+
+interface FilterBarProps {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  selectedCategory: Category | 'ALL';
+  onCategoryChange: (category: Category | 'ALL') => void;
+  sortBy: string;
+  onSortChange: (sort: string) => void;
+}
+
+const CATEGORIES: (Category | 'ALL')[] = ['ALL', 'TECH', 'NEWS', 'POLITICS', 'INFLUENCER', 'GOV', 'STREAMER', 'CRYPTO', 'GAMING'];
+
+export function FilterBar({ 
+  searchQuery, 
+  onSearchChange, 
+  selectedCategory, 
+  onCategoryChange,
+  sortBy,
+  onSortChange
+}: FilterBarProps) {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
       <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
         <span className="text-[10px] uppercase font-bold text-muted-foreground mr-2 shrink-0">Sort:</span>
-        <Button variant="outline" size="sm" className="h-8 text-[11px] font-semibold bg-secondary/50 border-border hover:bg-secondary transition-all">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => onSortChange('recent')}
+          className={cn(
+            "h-8 text-[11px] font-semibold bg-secondary/50 border-border hover:bg-secondary transition-all",
+            sortBy === 'recent' && "border-accent-blue/50 text-accent-blue"
+          )}
+        >
           Recent
         </Button>
-        <Button variant="outline" size="sm" className="h-8 text-[11px] font-semibold bg-secondary/50 border-accent-blue/30 text-accent-blue hover:bg-accent-blue/10">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => onSortChange('followers')}
+          className={cn(
+            "h-8 text-[11px] font-semibold bg-secondary/50 border-border hover:bg-secondary",
+            sortBy === 'followers' && "border-accent-blue/50 text-accent-blue"
+          )}
+        >
           Followers ↓
-        </Button>
-        <Button variant="outline" size="sm" className="h-8 text-[11px] font-semibold bg-secondary/50 border-border hover:bg-secondary transition-all">
-          Unused First
         </Button>
         
         <div className="h-4 w-px bg-border mx-2 shrink-0" />
@@ -30,15 +63,18 @@ export function FilterBar() {
         <DropdownMenu>
           <DropdownMenuTrigger className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "h-8 text-[11px] font-semibold bg-secondary/50 border-border min-w-[120px] justify-between"
+            "h-8 text-[11px] font-semibold bg-secondary/50 border-border min-w-[140px] justify-between",
+            selectedCategory !== 'ALL' && "border-accent-blue/50 text-accent-blue"
           )}>
-            Categories <ChevronDown className="h-3 w-3 opacity-50" />
+            {selectedCategory === 'ALL' ? 'All Categories' : selectedCategory} 
+            <ChevronDown className="h-3 w-3 opacity-50" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-card border-border">
-            <DropdownMenuItem>All Categories</DropdownMenuItem>
-            <DropdownMenuItem>Tech</DropdownMenuItem>
-            <DropdownMenuItem>News</DropdownMenuItem>
-            <DropdownMenuItem>Politics</DropdownMenuItem>
+          <DropdownMenuContent align="start" className="bg-card border-border max-h-[300px] overflow-y-auto">
+            {CATEGORIES.map((cat) => (
+              <DropdownMenuItem key={cat} onClick={() => onCategoryChange(cat)} className="text-xs">
+                {cat === 'ALL' ? 'All Categories' : cat}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -48,6 +84,8 @@ export function FilterBar() {
         <Input 
           placeholder="Search handle or name..." 
           className="pl-9 h-9 text-xs bg-background border-border focus-visible:ring-accent-blue/30 focus-visible:border-accent-blue/50 transition-all rounded-md"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
     </div>
